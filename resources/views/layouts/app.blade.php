@@ -12,61 +12,92 @@
             theme: {
                 extend: {
                     colors: {
-                        darkBase: '#121212',     /* Background utama gelap minimalis */
-                        darkSurface: '#18181b',  /* Background card/container ala referensi */
-                        darkBorder: '#27272a',   /* Warna border garis tipis */
-                        accentGreen: '#4ade80',  /* Aksen hijau lembut */
+                        appBg: '#121212',          /* Background gelap pekat ala aplikasi */
+                        cardSurface: '#1a1a1a',    /* Warna card / permukaan list */
+                        borderSubtle: '#2a2a2a',   /* Warna garis pembatas tipis */
+                        accentGreen: '#4ade80',    /* Hijau indikator */
                     }
                 }
             }
         }
     </script>
-    <!-- Alpine.js untuk interaksi dropdown/menu -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body { background-color: #121212; color: #e5e7eb; }
+    </style>
 </head>
-<body class="bg-darkBase text-gray-100 min-h-screen flex flex-col font-sans antialiased">
+<body class="min-h-screen flex flex-col font-sans antialiased pb-20">
 
-    <!-- Navbar Atas Website -->
-    <header class="bg-darkSurface border-b border-darkBorder sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 py-3.5 flex justify-between items-center">
-            <a href="{{ route('home') }}" class="text-sm font-bold text-white tracking-wide flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-accentGreen"></span> Portal PKL Laravel
-            </a>
-
-            <nav class="hidden sm:flex items-center space-x-1 text-xs font-medium">
-                <a href="{{ route('home') }}" class="px-3 py-1.5 rounded transition {{ request()->routeIs('home') ? 'bg-darkBorder text-accentGreen' : 'text-gray-400 hover:text-white' }}">Beranda</a>
-                <a href="{{ route('about') }}" class="px-3 py-1.5 rounded transition {{ request()->routeIs('about') ? 'bg-darkBorder text-accentGreen' : 'text-gray-400 hover:text-white' }}">Tentang</a>
-                <a href="{{ route('contact') }}" class="px-3 py-1.5 rounded transition {{ request()->routeIs('contact') ? 'bg-darkBorder text-accentGreen' : 'text-gray-400 hover:text-white' }}">Kontak</a>
-                @auth
-                    <a href="{{ route('jurnals.index') }}" class="px-3 py-1.5 rounded transition {{ request()->routeIs('jurnals*') ? 'bg-darkBorder text-accentGreen' : 'text-gray-400 hover:text-white' }}">Jurnal Harian</a>
-                @endauth
-            </nav>
-
-            <!-- Bagian Auth Kanan -->
+    <!-- Header Atas (Judul / Bulan & Tombol Aksi) -->
+    <header class="bg-cardSurface border-b border-borderSubtle sticky top-0 z-40 px-4 py-3">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <h1 class="text-base font-bold text-white tracking-wide">
+                @yield('header_title', 'Jurnal Harian')
+            </h1>
             <div class="flex items-center gap-2">
                 @auth
-                    <span class="text-xs text-gray-300 hidden md:inline">Halo, <strong class="text-white">{{ Auth::user()->name }}</strong></span>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="text-xs bg-darkBase border border-darkBorder text-red-400 px-3 py-1.5 rounded hover:bg-red-950/40 transition">Keluar</button>
+                        <button type="submit" class="text-xs text-red-400 bg-appBg border border-borderSubtle px-2.5 py-1 rounded hover:bg-red-950/30">Keluar</button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="text-xs text-gray-300 px-3 py-1.5 rounded bg-darkBase border border-darkBorder hover:text-white transition">Masuk</a>
-                    <a href="{{ route('register') }}" class="text-xs text-slate-950 font-bold bg-accentGreen px-3 py-1.5 rounded hover:bg-green-400 transition">Daftar</a>
+                    <a href="{{ route('login') }}" class="text-xs text-accentGreen font-semibold px-2.5 py-1 rounded bg-appBg border border-borderSubtle">Masuk</a>
                 @endauth
             </div>
         </div>
     </header>
 
-    <!-- Konten Utama -->
-    <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-6">
+    <!-- Konten Utama (Dibatasi max-w-md agar proporsional seperti UI Mobile App di gambar) -->
+    <main class="flex-1 max-w-md w-full mx-auto px-4 py-4">
         @yield('content')
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-darkSurface border-t border-darkBorder py-4 text-center text-xs text-gray-500">
-        <p>&copy; 2026 PT Metanouva Informatika — Program PKL Laravel</p>
-    </footer>
+    <!-- Floating Action Button (Tombol Tambah "+" Mengambang di Kanan Bawah ala Referensi) -->
+    @auth
+    <div class="fixed bottom-20 right-4 z-40 max-w-md w-full mx-auto flex justify-end pointer-events-none">
+        <a href="{{ route('jurnals.create') }}" class="pointer-events-auto bg-white text-slate-950 w-12 h-12 rounded-full flex items-center justify-center shadow-2xl font-bold text-2xl hover:bg-gray-200 transition">
+            +
+        </a>
+    </div>
+    @endauth
+
+    <!-- Bottom Navigation Bar (Identik dengan menu bawah di gambar referensi) -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-cardSurface border-t border-borderSubtle z-50">
+        <div class="max-w-md mx-auto flex justify-around items-center py-2.5">
+            
+            <!-- Tab Transaksi / Jurnal -->
+            <a href="{{ route('jurnals.index') }}" class="flex flex-col items-center gap-1 group">
+                <svg class="w-5 h-5 {{ request()->routeIs('jurnals*') ? 'text-accentGreen' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                </svg>
+                <span class="text-[10px] font-medium {{ request()->routeIs('jurnals*') ? 'text-accentGreen' : 'text-gray-400' }}">Jurnal</span>
+            </a>
+
+            <!-- Tab Beranda / Aset -->
+            <a href="{{ route('home') }}" class="flex flex-col items-center gap-1 group">
+                <svg class="w-5 h-5 {{ request()->routeIs('home') ? 'text-accentGreen' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 00-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span class="text-[10px] font-medium {{ request()->routeIs('home') ? 'text-accentGreen' : 'text-gray-400' }}">Beranda</span>
+            </a>
+
+            <!-- Tab Tentang -->
+            <a href="{{ route('about') }}" class="flex flex-col items-center gap-1 group">
+                <svg class="w-5 h-5 {{ request()->routeIs('about') ? 'text-accentGreen' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span class="text-[10px] font-medium {{ request()->routeIs('about') ? 'text-accentGreen' : 'text-gray-400' }}">Tentang</span>
+            </a>
+
+            <!-- Tab Kontak / Lainnya -->
+            <a href="{{ route('contact') }}" class="flex flex-col items-center gap-1 group">
+                <svg class="w-5 h-5 {{ request()->routeIs('contact') ? 'text-accentGreen' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-[10px] font-medium {{ request()->routeIs('contact') ? 'text-accentGreen' : 'text-gray-400' }}">Kontak</span>
+            </a>
+
+        </div>
+    </nav>
 
 </body>
 </html>

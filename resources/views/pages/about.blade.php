@@ -1,36 +1,38 @@
 @extends('layouts.app')
 
 @section('title', 'Tentang - PKL Laravel')
+@section('header_title', 'Tentang Program PKL')
 
 @section('content')
 <div class="space-y-4">
-    <div class="bg-cardBg rounded-lg p-5 border border-gray-800">
-        <h2 class="text-lg font-bold text-white mb-2">Tentang Program PKL</h2>
-        <p class="text-gray-400 text-sm leading-relaxed">
+    <div class="bg-cardSurface rounded-xl p-5 border border-borderSubtle">
+        <span class="text-[9px] uppercase font-semibold bg-emerald-950 text-accentGreen border border-emerald-900 px-2.5 py-0.5 rounded">Informasi PKL</span>
+        <h2 class="text-sm font-bold text-white mt-2 mb-1">Tentang Program PKL</h2>
+        <p class="text-gray-400 text-xs leading-relaxed">
             Program Praktik Kerja Lapangan (PKL) di PT Metanouva Informatika difokuskan pada penguasaan framework Laravel modern, berpindah dari paradigma PHP native ke arsitektur MVC yang aman dan terstruktur.
         </p>
     </div>
 
-    <div class="bg-cardBg rounded-lg border border-gray-800 divide-y divide-gray-800">
+    <div class="bg-cardSurface rounded-xl border border-borderSubtle divide-y divide-borderSubtle overflow-hidden">
         <div class="p-4 flex items-start gap-3">
-            <span class="text-accentColor font-mono font-bold text-sm">01</span>
+            <span class="text-accentGreen font-mono font-bold text-xs">01</span>
             <div>
-                <h3 class="text-sm font-semibold text-white">Routing Terpusat</h3>
-                <p class="text-xs text-gray-400 mt-0.5">Menggantikan file `index.php` manual dengan definisi route yang rapi.</p>
+                <h3 class="text-xs font-semibold text-white">Routing Terpusat</h3>
+                <p class="text-[11px] text-gray-400 mt-0.5">Menggantikan file <code>index.php</code> manual dengan definisi route yang rapi.</p>
             </div>
         </div>
         <div class="p-4 flex items-start gap-3">
-            <span class="text-accentColor font-mono font-bold text-sm">02</span>
+            <span class="text-accentGreen font-mono font-bold text-xs">02</span>
             <div>
-                <h3 class="text-sm font-semibold text-white">Logika Bisnis</h3>
-                <p class="text-xs text-gray-400 mt-0.5">Memisahkan pemrosesan logika dari tampilan visual secara konsisten.</p>
+                <h3 class="text-xs font-semibold text-white">Logika Bisnis</h3>
+                <p class="text-[11px] text-gray-400 mt-0.5">Memisahkan pemrosesan logika dari tampilan visual secara konsisten.</p>
             </div>
         </div>
         <div class="p-4 flex items-start gap-3">
-            <span class="text-accentColor font-mono font-bold text-sm">03</span>
+            <span class="text-accentGreen font-mono font-bold text-xs">03</span>
             <div>
-                <h3 class="text-sm font-semibold text-white">Blade Templating</h3>
-                <p class="text-xs text-gray-400 mt-0.5">Menggantikan `include` manual dengan sistem inheritance layout yang bersih.</p>
+                <h3 class="text-xs font-semibold text-white">Blade Templating</h3>
+                <p class="text-[11px] text-gray-400 mt-0.5">Menggantikan <code>include</code> manual dengan sistem inheritance layout yang bersih.</p>
             </div>
         </div>
     </div>

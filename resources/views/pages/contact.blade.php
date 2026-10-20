@@ -1,28 +1,31 @@
 @extends('layouts.app')
 
 @section('title', 'Kontak - PKL Laravel')
+@section('header_title', 'Pusat Kontak')
 
 @section('content')
-<div class="max-w-xl mx-auto bg-cardBg rounded-lg p-6 border border-gray-800">
-    <h2 class="text-lg font-bold text-white mb-1">Hubungi Pembimbing PKL</h2>
-    <p class="text-gray-400 text-xs mb-5">Kirimkan pertanyaan atau kendala teknis seputar proyek Laravel Anda.</p>
+<div class="space-y-4">
+    <div class="bg-cardSurface border border-borderSubtle rounded-xl p-5 space-y-3">
+        <span class="text-[9px] uppercase font-semibold bg-emerald-950 text-accentGreen border border-emerald-900 px-2.5 py-0.5 rounded">Dukungan</span>
+        <h2 class="text-sm font-bold text-white">Hubungi Pembimbing & Instansi</h2>
+        <p class="text-xs text-gray-400 leading-relaxed">
+            Jika terdapat kendala teknis atau pertanyaan seputar laporan progres PKL di PT Metanouva Informatika, silakan gunakan informasi di bawah ini.
+        </p>
+    </div>
 
-    <form class="space-y-4" onsubmit="event.preventDefault(); alert('Pesan tersimulasi dikirim!');">
-        <div>
-            <label class="block text-xs font-medium text-gray-300 mb-1">Nama Lengkap</label>
-            <input type="text" class="w-full bg-darkBg border border-gray-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-accentColor" placeholder="Nama Peserta PKL" required>
+    <div class="bg-cardSurface border border-borderSubtle rounded-xl divide-y divide-borderSubtle overflow-hidden text-xs">
+        <div class="p-4 flex justify-between items-center">
+            <span class="text-gray-400">Instansi Penempatan</span>
+            <span class="text-white font-medium">PT Metanouva Informatika</span>
         </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-300 mb-1">Email</label>
-            <input type="email" class="w-full bg-darkBg border border-gray-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-accentColor" placeholder="email@metanouva.com" required>
+        <div class="p-4 flex justify-between items-center">
+            <span class="text-gray-400">Wilayah / Lokasi</span>
+            <span class="text-white font-medium">Belitung</span>
         </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-300 mb-1">Pesan / Kendala Teknis</label>
-            <textarea rows="3" class="w-full bg-darkBg border border-gray-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-accentColor" placeholder="Tuliskan kendala Anda..." required></textarea>
+        <div class="p-4 flex justify-between items-center">
+            <span class="text-gray-400">Fase Proyek PKL</span>
+            <span class="text-accentGreen font-semibold">Minggu II (Selesai & Stabil)</span>
         </div>
-        <button type="submit" class="w-full bg-accentColor hover:bg-green-400 text-slate-950 font-bold py-2 rounded text-sm transition">
-            Kirim Pesan
-        </button>
-    </form>
+    </div>
 </div>
 @endsection
