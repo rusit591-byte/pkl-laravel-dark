@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone', // <--- Tambahkan field tambahan manual di sini (contoh: nomor telepon / asal sekolah)
     ];
 
     /**
@@ -45,5 +46,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Relasi ke Jurnal (Opsional jika ingin didefinisikan di Model User)[cite: 14]
+    public function jurnals()
+    {
+        return $this->hasMany(Jurnal::class);
     }
 }
