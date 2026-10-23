@@ -11,7 +11,7 @@
             theme: {
                 extend: {
                     colors: {
-                        appBg: '#121212',          /* Background gelap pekat ala referensi */
+                        appBg: '#121212',          /* Background gelap pekat */
                         cardSurface: '#1a1a1a',    /* Card surface ngotak */
                         borderSubtle: '#2a2a2a',   /* Garis pembatas tipis */
                         accentGreen: '#4ade80',    /* Hijau aksen */
@@ -55,7 +55,7 @@
                 </div>
 
                 <!-- Bagian User / Auth -->
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
                     @auth
                         <span class="text-xs text-gray-400 hidden sm:inline">{{ Auth::user()->name }}</span>
                         <form method="POST" action="{{ route('logout') }}">
@@ -65,8 +65,11 @@
                             </button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="text-xs text-accentGreen font-semibold px-3 py-1.5 rounded-md bg-appBg border border-borderSubtle hover:border-accentGreen transition">
+                        <a href="{{ route('login') }}" class="text-xs text-gray-300 px-3 py-1.5 rounded-md hover:text-white transition">
                             Masuk
+                        </a>
+                        <a href="{{ route('register') }}" class="text-xs text-slate-950 bg-accentGreen font-bold px-3.5 py-1.5 rounded-md hover:bg-green-400 transition shadow-sm">
+                            Daftar
                         </a>
                     @endauth
                 </div>
