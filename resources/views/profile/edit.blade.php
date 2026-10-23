@@ -8,7 +8,7 @@
     <!-- Header Halaman -->
     <div class="bg-cardSurface border border-borderSubtle rounded-lg p-5">
         <h1 class="text-lg font-bold text-white">Profil Pengguna</h1>
-        <p class="text-xs text-gray-400 mt-0.5">Kelola informasi akun dan pembaruan kata sandi Anda.</p>
+        <p class="text-xs text-gray-400 mt-0.5">Kelola informasi akun, foto profil, dan keamanan Anda.</p>
     </div>
 
     @if (session('status') === 'profile-updated')
@@ -23,28 +23,37 @@
         </div>
     @endif
 
-    <!-- Card Edit Informasi Profil -->
+    <!-- Card Edit Informasi & Foto Profil -->
     <div class="bg-cardSurface border border-borderSubtle rounded-lg p-6">
-        <h2 class="text-sm font-semibold text-white mb-4">Informasi Akun</h2>
+        <h2 class="text-sm font-semibold text-white mb-4">Informasi Akun & Foto</h2>
         
-        <form method="post" action="{{ route('profile.update') }}" class="space-y-4">
+        <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
             @method('patch')
 
+            <!-- Preview & Upload Foto -->
+            <div class="flex items-center gap-4 pb-2">
+                <div class="w-14 h-14 rounded-full bg-emerald-950 border border-emerald-900 text-accentGreen flex items-center justify-center text-lg font-bold overflow-hidden">
+                    @if(Auth::user()->avatar)
+                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="w-full h-full object-cover">
+                    @else
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    @endif
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Ganti Foto Profil</label>
+                    <input type="file" name="avatar" class="text-xs text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-appBg file:text-accentGreen hover:file:bg-emerald-950 file:border-borderSubtle file:border cursor-pointer">
+                </div>
+            </div>
+
             <div>
                 <label for="name" class="block text-xs font-semibold text-gray-300 mb-1">Nama Lengkap</label>
-                <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen" required autofocus autocomplete="name" />
-                @if($errors->updateProfileInformation && $errors->updateProfileInformation->has('name'))
-                    <p class="text-red-400 text-[11px] mt-1">{{ $errors->updateProfileInformation->first('name') }}</p>
-                @endif
+                <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen" required />
             </div>
 
             <div>
                 <label for="email" class="block text-xs font-semibold text-gray-300 mb-1">Alamat Email</label>
-                <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen" required autocomplete="username" />
-                @if($errors->updateProfileInformation && $errors->updateProfileInformation->has('email'))
-                    <p class="text-red-400 text-[11px] mt-1">{{ $errors->updateProfileInformation->first('email') }}</p>
-                @endif
+                <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen" required />
             </div>
 
             <div class="pt-2">
@@ -65,23 +74,17 @@
 
             <div>
                 <label for="current_password" class="block text-xs font-semibold text-gray-300 mb-1">Kata Sandi Saat Ini</label>
-                <input id="current_password" name="current_password" type="password" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen" autocomplete="current-password" />
-                @if($errors->updatePassword && $errors->updatePassword->has('current_password'))
-                    <p class="text-red-400 text-[11px] mt-1">{{ $errors->updatePassword->first('current_password') }}</p>
-                @endif
+                <input id="current_password" name="current_password" type="password" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen" />
             </div>
 
             <div>
                 <label for="password" class="block text-xs font-semibold text-gray-300 mb-1">Kata Sandi Baru</label>
-                <input id="password" name="password" type="password" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen" autocomplete="new-password" />
-                @if($errors->updatePassword && $errors->updatePassword->has('password'))
-                    <p class="text-red-400 text-[11px] mt-1">{{ $errors->updatePassword->first('password') }}</p>
-                @endif
+                <input id="password" name="password" type="password" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen" />
             </div>
 
             <div>
                 <label for="password_confirmation" class="block text-xs font-semibold text-gray-300 mb-1">Konfirmasi Kata Sandi Baru</label>
-                <input id="password_confirmation" name="password_confirmation" type="password" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen" autocomplete="new-password" />
+                <input id="password_confirmation" name="password_confirmation" type="password" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen" />
             </div>
 
             <div class="pt-2">
@@ -89,6 +92,26 @@
                     Ubah Kata Sandi
                 </button>
             </div>
+        </form>
+    </div>
+
+    <!-- Card Hapus Akun -->
+    <div class="bg-cardSurface border border-red-900/50 rounded-lg p-6">
+        <h2 class="text-sm font-semibold text-red-400 mb-1">Hapus Akun</h2>
+        <p class="text-xs text-gray-400 mb-4">Setelah akun dihapus, seluruh data dan catatan jurnal harian Anda akan hilang secara permanen.</p>
+
+        <form method="post" action="{{ route('profile.destroy') }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun ini secara permanen?')">
+            @csrf
+            @method('delete')
+
+            <div>
+                <label for="password_del" class="block text-xs font-semibold text-gray-300 mb-1">Masukkan Password untuk Konfirmasi</label>
+                <input id="password_del" name="password" type="password" placeholder="Password Anda" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500 mb-3" required />
+            </div>
+
+            <button type="submit" class="bg-red-950/60 border border-red-900 text-red-400 hover:bg-red-900/60 text-xs font-bold px-4 py-2 rounded-md transition">
+                Hapus Akun Permanen
+            </button>
         </form>
     </div>
 

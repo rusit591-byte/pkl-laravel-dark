@@ -22,7 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'phone', // <--- Tambahkan field tambahan manual di sini (contoh: nomor telepon / asal sekolah)
+        'avatar', 
     ];
 
     /**

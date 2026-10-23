@@ -54,37 +54,38 @@
                     </div>
                 </div>
 
-                <!-- Bagian User / Auth -->
-                <div class="flex items-center gap-3">
-                    @auth
-                        <!-- Tombol Profil (Avatar Inisial + Nama User yang bisa diklik) -->
-                        <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 bg-appBg border border-borderSubtle hover:border-accentGreen px-3 py-1.5 rounded-md transition group">
-                            <!-- Avatar Inisial Bulat -->
-                            <div class="w-6 h-6 rounded-full bg-emerald-950 border border-emerald-900 text-accentGreen flex items-center justify-center text-[10px] font-bold">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                            </div>
-                            <!-- Nama Pengguna -->
-                            <span class="text-xs text-gray-300 group-hover:text-white font-medium transition">
-                                {{ Auth::user()->name }}
-                            </span>
-                        </a>
+                <!-- Bagian User / Auth di Navbar -->
+<div class="flex items-center gap-3">
+    @auth
+        <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 bg-appBg border border-borderSubtle hover:border-accentGreen px-3 py-1.5 rounded-md transition group">
+            <!-- Avatar Foto atau Inisial -->
+            <div class="w-6 h-6 rounded-full bg-emerald-950 border border-emerald-900 text-accentGreen flex items-center justify-center text-[10px] font-bold overflow-hidden">
+                @if(Auth::user()->avatar)
+                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="w-full h-full object-cover">
+                @else
+                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                @endif
+            </div>
+            <span class="text-xs text-gray-300 group-hover:text-white font-medium transition">
+                {{ Auth::user()->name }}
+            </span>
+        </a>
 
-                        <!-- Tombol Keluar -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="text-xs text-red-400 bg-appBg border border-borderSubtle px-3 py-1.5 rounded-md hover:bg-red-950/40 transition">
-                                Keluar
-                            </button>
-                        </form>
-                    @else
-                        <a href="{{ route('login') }}" class="text-xs text-gray-300 px-3 py-1.5 rounded-md hover:text-white transition">
-                            Masuk
-                        </a>
-                        <a href="{{ route('register') }}" class="text-xs text-slate-950 bg-accentGreen font-bold px-3.5 py-1.5 rounded-md hover:bg-green-400 transition shadow-sm">
-                            Daftar
-                        </a>
-                    @endauth
-                </div>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="text-xs text-red-400 bg-appBg border border-borderSubtle px-3 py-1.5 rounded-md hover:bg-red-950/40 transition">
+                Keluar
+            </button>
+        </form>
+    @else
+        <a href="{{ route('login') }}" class="text-xs text-gray-300 px-3 py-1.5 rounded-md hover:text-white transition">
+            Masuk
+        </a>
+        <a href="{{ route('register') }}" class="text-xs text-slate-950 bg-accentGreen font-bold px-3.5 py-1.5 rounded-md hover:bg-green-400 transition shadow-sm">
+            Daftar
+        </a>
+    @endauth
+</div>
 
             </div>
         </div>
