@@ -55,9 +55,21 @@
                 </div>
 
                 <!-- Bagian User / Auth -->
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-3">
                     @auth
-                        <span class="text-xs text-gray-400 hidden sm:inline">{{ Auth::user()->name }}</span>
+                        <!-- Tombol Profil (Avatar Inisial + Nama User yang bisa diklik) -->
+                        <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 bg-appBg border border-borderSubtle hover:border-accentGreen px-3 py-1.5 rounded-md transition group">
+                            <!-- Avatar Inisial Bulat -->
+                            <div class="w-6 h-6 rounded-full bg-emerald-950 border border-emerald-900 text-accentGreen flex items-center justify-center text-[10px] font-bold">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                            <!-- Nama Pengguna -->
+                            <span class="text-xs text-gray-300 group-hover:text-white font-medium transition">
+                                {{ Auth::user()->name }}
+                            </span>
+                        </a>
+
+                        <!-- Tombol Keluar -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="text-xs text-red-400 bg-appBg border border-borderSubtle px-3 py-1.5 rounded-md hover:bg-red-950/40 transition">
