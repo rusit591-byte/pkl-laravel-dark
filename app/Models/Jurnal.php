@@ -11,16 +11,23 @@ class Jurnal extends Model
 
     protected $fillable = [
         'user_id',
-        'tanggal',
+        'kategori_id', 
         'judul',
         'deskripsi',
-        'status',
-        'kendala',
+        'lampiran',    
+        'tanggal',
+        'status'
     ];
 
-    // Relasi: Setiap jurnal dimiliki oleh satu user
+    // Jurnal milik satu user
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Jurnal milik satu kategori
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class);
     }
 }
