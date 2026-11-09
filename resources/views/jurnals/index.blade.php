@@ -1,65 +1,123 @@
 @extends('layouts.app')
 
-@section('title', 'Jurnal Harian - PKL Laravel')
+@section('title', 'Jurnal Harian - Portal PKL')
 
 @section('content')
 <div class="space-y-5">
     
-    <!-- Header Halaman + Tombol Tambah Jurnal -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-cardSurface border border-borderSubtle rounded-lg p-5">
+    <!-- Header & Tombol Tambah -->
+    <div class="bg-cardSurface border border-borderSubtle rounded-lg p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
             <h1 class="text-lg font-bold text-white">Jurnal Harian PKL</h1>
             <p class="text-xs text-gray-400 mt-0.5">Catatan rekapitulasi progres pekerjaan harian Anda.</p>
         </div>
-        <div>
-            <a href="{{ route('jurnals.create') }}" class="inline-flex items-center gap-2 bg-accentGreen hover:bg-green-400 text-slate-950 font-bold text-xs px-4 py-2 rounded-md transition">
-                <span>+</span> Tambah Jurnal
-            </a>
-        </div>
+        <a href="{{ route('jurnals.create') }}" class="bg-accentGreen hover:bg-green-400 text-slate-950 font-bold text-xs px-4 py-2 rounded-md transition shadow-sm flex items-center gap-1.5">
+            + Tambah Jurnal
+        </a>
     </div>
 
-    @if(session('success'))
-        <div class="bg-emerald-950/80 border border-emerald-900 text-accentGreen text-xs p-3 rounded-lg">
-            {{ session('success') }}
-        </div>
-    @endif
+    <!-- Form Pencarian dan Filter Kategori/Status/Tanggal -->
+    <div class="bg-cardSurface border border-borderSubtle rounded-lg p-4">
+        <form method="GET" action="{{ route('jurnals.index') }}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+            
+            <!-- Cari Judul -->
+            <div>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul..." class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen">
+            </div>
 
-    <!-- Card Tabel / List Jurnal Ngotak Presisi -->
-    <div class="bg-cardSurface border border-borderSubtle rounded-lg divide-y divide-borderSubtle overflow-hidden">
+            <!-- Filter Kategori -->
+            <div>
+                <select name="kategori_id" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen">
+                    <option value="">Semua Kategori</option>
+                    @foreach($kategoris as $kat)
+                        <option value="{{ $kat->id }}" {{ request('kategori_id') == $kat->id ? 'selected' : '' }}>{{ $kat->nama }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Filter Status -->
+            <div>
+                <select name="status" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen">
+                    <option value="">Semua Status</option>
+                    <option value="Proses" {{ request('status') == 'Proses' ? 'selected' : '' }}>Proses</option>
+                    <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                    <option value="Revisi" {{ request('status') == 'Revisi' ? 'selected' : '' }}>Revisi</option>
+                </select>
+            </div>
+
+            <!-- Filter Tanggal -->
+            <div>
+                <input type="date" name="tanggal" value="{{ request('tanggal') }}" class="w-full bg-appBg border border-borderSubtle rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen">
+            </div>
+
+            <!-- Tombol Filter & Reset -->
+            <div class="flex items-center gap-2">
+                <button type="submit" class="flex-1 bg-emerald-950 border border-emerald-900 text-accentGreen hover:bg-emerald-900 text-xs font-semibold py-2 rounded-md transition">
+                    Filter
+                </button>
+                <a href="{{ route('jurnals.index') }}" class="px-3 py-2 bg-appBg border border-borderSubtle text-gray-400 hover:text-white text-xs rounded-md transition" title="Reset Filter">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Daftar Jurnal -->
+    <div class="space-y-3">
         @forelse($jurnals as $jurnal)
-            <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-appBg/40 transition">
-                <div class="space-y-1.5 flex-1">
-                    <div class="flex items-center gap-2.5">
-                        <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded border {{ $jurnal->status == 'selesai' ? 'bg-emerald-950 text-accentGreen border-emerald-900' : ($jurnal->status == 'proses' ? 'bg-yellow-950 text-yellow-400 border-yellow-900' : 'bg-zinc-800 text-gray-300 border-zinc-700') }}">
+            <div class="bg-cardSurface border border-borderSubtle rounded-lg p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded {{ $jurnal->status == 'Selesai' ? 'bg-emerald-950 text-accentGreen border border-emerald-900' : ($jurnal->status == 'Proses' ? 'bg-amber-950 text-amber-400 border border-amber-900' : 'bg-red-950 text-red-400 border border-red-900') }}">
                             {{ $jurnal->status }}
                         </span>
-                        <span class="text-xs text-gray-400 font-mono">{{ $jurnal->tanggal }}</span>
+                        
+                        <!-- Badge Kategori -->
+                        @if($jurnal->kategori)
+                            <span class="text-[10px] bg-appBg border border-borderSubtle text-gray-300 px-2 py-0.5 rounded">
+                                {{ $jurnal->kategori->nama }}
+                            </span>
+                        @endif
+
+                        <span class="text-xs text-gray-500">{{ $jurnal->tanggal }}</span>
                     </div>
-                    <h3 class="text-sm font-semibold text-white">{{ $jurnal->judul }}</h3>
-                    <p class="text-xs text-gray-400 leading-relaxed">{{ $jurnal->deskripsi }}</p>
-                    @if($jurnal->kendala)
-                        <p class="text-[11px] text-red-400/90 italic">Kendala: {{ $jurnal->kendala }}</p>
+
+                    <h2 class="text-sm font-bold text-white">{{ $jurnal->judul }}</h2>
+                    <p class="text-xs text-gray-300 leading-relaxed">{{ $jurnal->deskripsi }}</p>
+
+                    <!-- Lampiran Link -->
+                    @if($jurnal->lampiran)
+                        <div class="pt-1">
+                            <a href="{{ asset('storage/' . $jurnal->lampiran) }}" target="_blank" class="text-[11px] text-accentGreen hover:underline inline-flex items-center gap-1">
+                                📎 Lihat Lampiran / Bukti
+                            </a>
+                        </div>
                     @endif
                 </div>
-                
-                <div class="flex items-center gap-2 self-end sm:self-center">
-                    <a href="{{ route('jurnals.edit', $jurnal->id) }}" class="text-xs bg-appBg border border-borderSubtle text-gray-300 px-3 py-1.5 rounded-md hover:text-white transition">
+
+                <div class="flex items-center gap-2 self-end md:self-center">
+                    <a href="{{ route('jurnals.edit', $jurnal->id) }}" class="text-xs bg-appBg border border-borderSubtle hover:border-accentGreen text-gray-300 px-3 py-1.5 rounded-md transition">
                         Ubah
                     </a>
-                    <form action="{{ route('jurnals.destroy', $jurnal->id) }}" method="POST" onsubmit="return confirm('Hapus jurnal ini?')">
+                    <form action="{{ route('jurnals.destroy', $jurnal->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus jurnal ini?')">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="text-xs bg-red-950/30 border border-red-900/60 text-red-400 px-3 py-1.5 rounded-md hover:bg-red-900/50 transition">
+                        <button type="submit" class="text-xs bg-red-950/40 border border-red-900 hover:bg-red-900/60 text-red-400 px-3 py-1.5 rounded-md transition">
                             Hapus
                         </button>
                     </form>
                 </div>
             </div>
         @empty
-            <div class="p-8 text-center text-xs text-gray-500">
-                Belum ada catatan jurnal harian yang dibuat.
+            <div class="bg-cardSurface border border-borderSubtle rounded-lg p-8 text-center text-gray-500 text-xs">
+                Belum ada catatan jurnal harian yang ditemukan.
             </div>
         @endforelse
+    </div>
+
+    <!-- Pagination links -->
+    <div class="pt-2">
+        {{ $jurnals->links() }}
     </div>
 
 </div>

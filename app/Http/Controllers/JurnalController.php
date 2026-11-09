@@ -3,58 +3,103 @@
 namespace App\Http\Controllers;
 
 use App\Models\Jurnal;
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class JurnalController extends Controller
 {
-    // Tampilkan daftar jurnal milik user yang login
-    public function index()
+    /**
+     * Tampilkan daftar jurnal dengan pencarian, filter, dan pagination.
+     */
+    public function index(Request $request)
     {
-        $jurnals = Jurnal::where('user_id', Auth::id())->latest()->get();
-        return view('jurnals.index', compact('jurnals'));
+        $query = Jurnal::with(['kategori', 'user'])
+            ->where('user_id', Auth::id());
+
+        // 1. Fitur Pencarian berdasarkan Judul
+        if ($request->filled('search')) {
+            $query->where('judul', 'like', '%' . $request->search . '%');
+        }
+
+        // 2. Filter berdasarkan Kategori
+        if ($request->filled('kategori_id')) {
+            $query->where('kategori_id', $request->kategori_id);
+        }
+
+        // 3. Filter berdasarkan Status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // 4. Filter berdasarkan Tanggal
+        if ($request->filled('tanggal')) {
+            $query->whereDate('tanggal', $request->tanggal);
+        }
+
+        // Ambil data dengan pagination dan pastikan filter terbawa saat pindah halaman
+        $jurnals = $query->latest('tanggal')->paginate(5)->withQueryString();
+        
+        // Ambil data kategori untuk opsi filter di dropdown view
+        $kategoris = Kategori::all();
+
+        return view('jurnals.index', compact('jurnals', 'kategoris'));
     }
 
-    // Form tambah jurnal
+    /**
+     * Tampilkan form tambah jurnal.
+     */
     public function create()
     {
-        return view('jurnals.create');
+        $kategoris = Kategori::all();
+        return view('jurnals.create', compact('kategoris'));
     }
 
-    // Simpan data jurnal baru
+    /**
+     * Simpan jurnal baru ke database.
+     */
     public function store(Request $request)
     {
         $request->validate([
-            'tanggal' => 'required|date',
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
-            'status' => 'required|in:todo,proses,selesai',
-            'kendala' => 'nullable|string',
+            'judul'       => 'required|string|max:255',
+            'kategori_id' => 'required|exists:kategoris,id',
+            'deskripsi'   => 'required|string',
+            'tanggal'     => 'required|date',
+            'status'      => 'required|in:Proses,Selesai,Revisi',
+            'lampiran'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048', // Validasi file max 2MB
         ]);
 
-        Jurnal::create([
-            'user_id' => Auth::id(),
-            'tanggal' => $request->tanggal,
-            'judul' => $request->judul,
-            'deskripsi' => $request->deskripsi,
-            'status' => $request->status,
-            'kendala' => $request->kendala,
-        ]);
+        $data = $request->except('lampiran');
+        $data['user_id'] = Auth::id();
 
-        return redirect()->route('jurnals.index')->with('success', 'Jurnal berhasil ditambahkan.');
+        // Upload lampiran jika ada
+        if ($request->hasFile('lampiran')) {
+            $data['lampiran'] = $request->file('lampiran')->store('lampirans', 'public');
+        }
+
+        Jurnal::create($data);
+
+        return redirect()->route('jurnals.index')->with('success', 'Jurnal harian berhasil ditambahkan.');
     }
 
-    // Form edit jurnal
+    /**
+     * Tampilkan form edit jurnal.
+     */
     public function edit(Jurnal $jurnal)
     {
-        // Pastikan user hanya bisa edit miliknya sendiri
+        // Pastikan hanya pemilik jurnal yang bisa edit
         if ($jurnal->user_id !== Auth::id()) {
             abort(403);
         }
-        return view('jurnals.edit', compact('jurnal'));
+
+        $kategoris = Kategori::all();
+        return view('jurnals.edit', compact('jurnal', 'kategoris'));
     }
 
-    // Update data jurnal
+    /**
+     * Update jurnal.
+     */
     public function update(Request $request, Jurnal $jurnal)
     {
         if ($jurnal->user_id !== Auth::id()) {
@@ -62,27 +107,44 @@ class JurnalController extends Controller
         }
 
         $request->validate([
-            'tanggal' => 'required|date',
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
-            'status' => 'required|in:todo,proses,selesai',
-            'kendala' => 'nullable|string',
+            'judul'       => 'required|string|max:255',
+            'kategori_id' => 'required|exists:kategoris,id',
+            'deskripsi'   => 'required|string',
+            'tanggal'     => 'required|date',
+            'status'      => 'required|in:Proses,Selesai,Revisi',
+            'lampiran'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        $jurnal->update($request->all());
+        $data = $request->except('lampiran');
 
-        return redirect()->route('jurnals.index')->with('success', 'Jurnal berhasil diperbarui.');
+        if ($request->hasFile('lampiran')) {
+            // Hapus file lama jika ada
+            if ($jurnal->lampiran && Storage::disk('public')->exists($jurnal->lampiran)) {
+                Storage::disk('public')->delete($jurnal->lampiran);
+            }
+            $data['lampiran'] = $request->file('lampiran')->store('lampirans', 'public');
+        }
+
+        $jurnal->update($data);
+
+        return redirect()->route('jurnals.index')->with('success', 'Jurnal harian berhasil diperbarui.');
     }
 
-    // Hapus jurnal
+    /**
+     * Hapus jurnal.
+     */
     public function destroy(Jurnal $jurnal)
     {
         if ($jurnal->user_id !== Auth::id()) {
             abort(403);
         }
 
+        if ($jurnal->lampiran && Storage::disk('public')->exists($jurnal->lampiran)) {
+            Storage::disk('public')->delete($jurnal->lampiran);
+        }
+
         $jurnal->delete();
 
-        return redirect()->route('jurnals.index')->with('success', 'Jurnal berhasil dihapus.');
+        return redirect()->route('jurnals.index')->with('success', 'Jurnal harian berhasil dihapus.');
     }
 }

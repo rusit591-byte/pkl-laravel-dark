@@ -24,7 +24,7 @@
         </div>
         <div class="p-4 flex justify-between items-center">
             <span class="text-gray-400">Fase Proyek PKL</span>
-            <span class="text-accentGreen font-semibold">Minggu II (Selesai & Stabil)</span>
+            <span class="text-accentGreen font-semibold">Minggu V (Selesai & Stabil)</span>
         </div>
     </div>
 </div>
