@@ -13,9 +13,19 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // Panggil seeder Kategori yang sudah kita buat
+        // Jalankan Kategori Seeder terlebih dahulu
         $this->call([
             KategoriSeeder::class,
         ]);
+    
+        // Buat Akun Pembimbing Default
+        \App\Models\User::firstOrCreate(
+            ['email' => 'pembimbing@metanouva.com'],
+            [
+                'name' => 'Pembimbing PKL',
+                'password' => bcrypt('password123'),
+                'role' => 'pembimbing',
+            ]
+        );
     }
 }

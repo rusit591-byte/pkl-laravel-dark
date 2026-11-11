@@ -30,4 +30,10 @@ class Jurnal extends Model
     {
         return $this->belongsTo(Kategori::class);
     }
+
+    // Satu jurnal bisa memiliki banyak komentar/catatan
+    public function komentars()
+    {
+        return $this->hasMany(Komentar::class);
+    }
 }

@@ -65,48 +65,86 @@
     <!-- Daftar Jurnal -->
     <div class="space-y-3">
         @forelse($jurnals as $jurnal)
-            <div class="bg-cardSurface border border-borderSubtle rounded-lg p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div class="space-y-1.5">
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded {{ $jurnal->status == 'Selesai' ? 'bg-emerald-950 text-accentGreen border border-emerald-900' : ($jurnal->status == 'Proses' ? 'bg-amber-950 text-amber-400 border border-amber-900' : 'bg-red-950 text-red-400 border border-red-900') }}">
-                            {{ $jurnal->status }}
-                        </span>
-                        
-                        <!-- Badge Kategori -->
-                        @if($jurnal->kategori)
-                            <span class="text-[10px] bg-appBg border border-borderSubtle text-gray-300 px-2 py-0.5 rounded">
-                                {{ $jurnal->kategori->nama }}
+            <div class="bg-cardSurface border border-borderSubtle rounded-lg p-5 flex flex-col justify-between gap-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="space-y-1.5">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded {{ $jurnal->status == 'Selesai' ? 'bg-emerald-950 text-accentGreen border border-emerald-900' : ($jurnal->status == 'Proses' ? 'bg-amber-950 text-amber-400 border border-amber-900' : 'bg-red-950 text-red-400 border border-red-900') }}">
+                                {{ $jurnal->status }}
                             </span>
-                        @endif
+                            
+                            <!-- Badge Kategori -->
+                            @if($jurnal->kategori)
+                                <span class="text-[10px] bg-appBg border border-borderSubtle text-gray-300 px-2 py-0.5 rounded">
+                                    {{ $jurnal->kategori->nama }}
+                                </span>
+                            @endif
 
-                        <span class="text-xs text-gray-500">{{ $jurnal->tanggal }}</span>
+                            <span class="text-xs text-gray-500">{{ $jurnal->tanggal }}</span>
+
+                            <!-- Menampilkan nama peserta jika dilihat oleh pembimbing -->
+                            @if(auth()->user()->role === 'pembimbing' && isset($jurnal->user))
+                                <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-900 px-2 py-0.5 rounded">
+                                    👤 Peserta: {{ $jurnal->user->name }}
+                                </span>
+                            @endif
+                        </div>
+
+                        <h2 class="text-sm font-bold text-white">{{ $jurnal->judul }}</h2>
+                        <p class="text-xs text-gray-300 leading-relaxed">{{ $jurnal->deskripsi }}</p>
+
+                        <!-- Lampiran Link -->
+                        @if($jurnal->lampiran)
+                            <div class="pt-1">
+                                <a href="{{ asset('storage/' . $jurnal->lampiran) }}" target="_blank" class="text-[11px] text-accentGreen hover:underline inline-flex items-center gap-1">
+                                    📎 Lihat Lampiran / Bukti
+                                </a>
+                            </div>
+                        @endif
                     </div>
 
-                    <h2 class="text-sm font-bold text-white">{{ $jurnal->judul }}</h2>
-                    <p class="text-xs text-gray-300 leading-relaxed">{{ $jurnal->deskripsi }}</p>
-
-                    <!-- Lampiran Link -->
-                    @if($jurnal->lampiran)
-                        <div class="pt-1">
-                            <a href="{{ asset('storage/' . $jurnal->lampiran) }}" target="_blank" class="text-[11px] text-accentGreen hover:underline inline-flex items-center gap-1">
-                                📎 Lihat Lampiran / Bukti
+                    <!-- Tombol Aksi (Hanya muncul jika bukan pembimbing / milik sendiri) -->
+                    @if(auth()->user()->role !== 'pembimbing')
+                        <div class="flex items-center gap-2 self-end md:self-center">
+                            <a href="{{ route('jurnals.edit', $jurnal->id) }}" class="text-xs bg-appBg border border-borderSubtle hover:border-accentGreen text-gray-300 px-3 py-1.5 rounded-md transition">
+                                Ubah
                             </a>
+                            <form action="{{ route('jurnals.destroy', $jurnal->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus jurnal ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-xs bg-red-950/40 border border-red-900 hover:bg-red-900/60 text-red-400 px-3 py-1.5 rounded-md transition">
+                                    Hapus
+                                </button>
+                            </form>
                         </div>
                     @endif
                 </div>
 
-                <div class="flex items-center gap-2 self-end md:self-center">
-                    <a href="{{ route('jurnals.edit', $jurnal->id) }}" class="text-xs bg-appBg border border-borderSubtle hover:border-accentGreen text-gray-300 px-3 py-1.5 rounded-md transition">
-                        Ubah
-                    </a>
-                    <form action="{{ route('jurnals.destroy', $jurnal->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus jurnal ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-xs bg-red-950/40 border border-red-900 hover:bg-red-900/60 text-red-400 px-3 py-1.5 rounded-md transition">
-                            Hapus
-                        </button>
-                    </form>
+                <!-- Bagian Komentar / Catatan Pembimbing -->
+                <div class="mt-2 pt-3 border-t border-borderSubtle space-y-2">
+                    <h3 class="text-xs font-semibold text-gray-400">Catatan / Komentar Pembimbing:</h3>
+                    @forelse($jurnal->komentars as $komentar)
+                        <div class="bg-appBg border border-borderSubtle p-2.5 rounded text-xs space-y-1">
+                            <div class="flex justify-between text-[10px] text-gray-500">
+                                <span class="font-bold text-accentGreen">{{ $komentar->user->name ?? 'Pembimbing' }}</span>
+                                <span>{{ $komentar->created_at->diffForHumans() }}</span>
+                            </div>
+                            <p class="text-gray-300">{{ $komentar->isi }}</p>
+                        </div>
+                    @empty
+                        <p class="text-[11px] text-gray-500 italic">Belum ada catatan dari pembimbing.</p>
+                    @endforelse
+
+                    <!-- Form Input Komentar khusus Pembimbing -->
+                    @if(auth()->user()->role === 'pembimbing')
+                        <form action="{{ route('pembimbing.jurnals.komentar', $jurnal->id) }}" method="POST" class="mt-2 flex gap-2">
+                            @csrf
+                            <input type="text" name="isi" placeholder="Tulis catatan atau evaluasi..." class="flex-1 bg-appBg border border-borderSubtle rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-accentGreen" required>
+                            <button type="submit" class="bg-accentGreen hover:bg-green-400 text-slate-950 font-bold px-3 py-1.5 rounded text-xs transition">Kirim</button>
+                        </form>
+                    @endif
                 </div>
+
             </div>
         @empty
             <div class="bg-cardSurface border border-borderSubtle rounded-lg p-8 text-center text-gray-500 text-xs">
