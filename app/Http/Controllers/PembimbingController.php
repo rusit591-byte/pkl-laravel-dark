@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PembimbingController extends Controller
 {
-    // Menampilkan daftar seluruh jurnal peserta (dengan filter per peserta)
+    // Menampilkan daftar seluruh jurnal peserta
     public function index(Request $request)
     {
         $query = Jurnal::with(['user', 'kategori', 'komentars.user']);
@@ -21,14 +21,12 @@ class PembimbingController extends Controller
         }
 
         $jurnals = $query->latest('tanggal')->paginate(5)->withQueryString();
-
-        // Ambil daftar user yang rolenya 'peserta' untuk pilihan dropdown filter
         $pesertas = User::where('role', 'peserta')->get();
 
         return view('pembimbing.jurnals.index', compact('jurnals', 'pesertas'));
     }
 
-    // Menyimpan komentar/catatan dari pembimbing pada jurnal tertentu
+    // Menyimpan komentar/catatan dari pembimbing
     public function storeKomentar(Request $request, Jurnal $jurnal)
     {
         $request->validate([
@@ -42,5 +40,19 @@ class PembimbingController extends Controller
         ]);
 
         return back()->with('success', 'Catatan/komentar berhasil dikirim.');
+    }
+
+    // [BARU] Fungsi untuk Approve / Ubah Status Jurnal Siswa
+    public function updateStatus(Request $request, Jurnal $jurnal)
+    {
+        $request->validate([
+            'status' => 'required|in:proses,selesai,revisi',
+        ]);
+
+        $jurnal->update([
+            'status' => $request->status,
+        ]);
+
+        return back()->with('success', 'Status jurnal berhasil diperbarui (Approved/Evaluated).');
     }
 }

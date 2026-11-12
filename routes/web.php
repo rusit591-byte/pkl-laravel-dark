@@ -37,5 +37,14 @@ Route::middleware(['auth', 'role:pembimbing'])->prefix('pembimbing')->name('pemb
     Route::post('/jurnals/{jurnal}/komentar', [PembimbingController::class, 'storeKomentar'])->name('komentar');
 });
 
+// Route Khusus Pembimbing (Dilindungi Middleware Role)
+Route::middleware(['auth', 'role:pembimbing'])->prefix('pembimbing')->name('pembimbing.')->group(function () {
+    Route::get('/jurnals', [PembimbingController::class, 'index'])->name('jurnals');
+    Route::post('/jurnals/{jurnal}/komentar', [PembimbingController::class, 'storeKomentar'])->name('komentar');
+    
+    // [BARU] Route untuk Ubah Status / Approve Jurnal
+    Route::patch('/jurnals/{jurnal}/status', [PembimbingController::class, 'updateStatus'])->name('status.update');
+});
+
 // MEMUAT RUTE AUTENTIKASI BROWSER (LOGIN, REGISTER, DLL)
 require __DIR__.'/auth.php';
