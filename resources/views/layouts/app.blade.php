@@ -39,35 +39,30 @@
                     </a>
 
                     <div class="hidden md:flex items-center gap-1 text-xs">
-                        <!-- Beranda (Sekarang bisa diklik) -->
-                        <a href="{{ route('home') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('home') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
-                            Beranda
-                        </a>
+    <!-- Tombol Utama diarahkan ke Dashboard -->
+    <a href="{{ route('dashboard') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('dashboard*') || request()->routeIs('home') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
+        Dashboard Utama
+    </a>
 
-                        @auth
-                            <!-- Dashboard (Ditambahkan agar bisa diakses dari navbar) -->
-                            <a href="{{ route('dashboard') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('dashboard') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
-                                Dashboard
-                            </a>
+    @auth
+        @if(Auth::user()->role === 'pembimbing')
+            <a href="{{ route('pembimbing.jurnals') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('pembimbing.jurnals*') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
+                Monitoring Jurnal Siswa
+            </a>
+        @else
+            <a href="{{ route('jurnals.index') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('jurnals*') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
+                Jurnal Harian Saya
+            </a>
+        @endif
+    @endauth
 
-                            @if(Auth::user()->role === 'pembimbing')
-                                <a href="{{ route('pembimbing.jurnals') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('pembimbing.jurnals*') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
-                                    Monitoring Jurnal
-                                </a>
-                            @else
-                                <a href="{{ route('jurnals.index') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('jurnals*') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
-                                    Jurnal Harian
-                                </a>
-                            @endif
-                        @endauth
-
-                        <a href="{{ route('about') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('about') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
-                            Tentang
-                        </a>
-                        <a href="{{ route('contact') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('contact') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
-                            Kontak
-                        </a>
-                    </div>
+    <a href="{{ route('about') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('about') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
+        Tentang
+    </a>
+    <a href="{{ route('contact') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('contact') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
+        Kontak
+    </a>
+</div>
                 </div>
 
                 <!-- Bagian User / Auth -->
