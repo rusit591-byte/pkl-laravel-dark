@@ -33,8 +33,8 @@ Route::middleware(['auth'])->group(function () {
 
 // Route Khusus Pembimbing (Dilindungi Middleware Role)
 Route::middleware(['auth', 'role:pembimbing'])->prefix('pembimbing')->name('pembimbing.')->group(function () {
-    Route::get('/jurnals', [PembimbingController::class, 'index'])->name('jurnals.index');
-    Route::post('/jurnals/{jurnal}/komentar', [PembimbingController::class, 'storeKomentar'])->name('jurnals.komentar');
+    Route::get('/jurnals', [PembimbingController::class, 'index'])->name('jurnals');
+    Route::post('/jurnals/{jurnal}/komentar', [PembimbingController::class, 'storeKomentar'])->name('komentar');
 });
 
 // MEMUAT RUTE AUTENTIKASI BROWSER (LOGIN, REGISTER, DLL)
