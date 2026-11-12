@@ -8,7 +8,7 @@ use App\Http\Controllers\PembimbingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExportController;
 
-// Halaman Publik / Statis Minggu I
+// Halaman Publik / Statis
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
@@ -19,10 +19,10 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard Ringkasan (Agregasi Data)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // CRUD Jurnal Harian
+    // CRUD Jurnal Harian (Peserta)
     Route::resource('jurnals', JurnalController::class);
 
-    // Export PDF (Cetak / Print Browser)
+    // Export PDF
     Route::get('/jurnals/export-pdf', [ExportController::class, 'exportPdf'])->name('jurnals.export-pdf');
 
     // Manajemen Profil (Breeze)
@@ -35,16 +35,8 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:pembimbing'])->prefix('pembimbing')->name('pembimbing.')->group(function () {
     Route::get('/jurnals', [PembimbingController::class, 'index'])->name('jurnals');
     Route::post('/jurnals/{jurnal}/komentar', [PembimbingController::class, 'storeKomentar'])->name('komentar');
-});
-
-// Route Khusus Pembimbing (Dilindungi Middleware Role)
-Route::middleware(['auth', 'role:pembimbing'])->prefix('pembimbing')->name('pembimbing.')->group(function () {
-    Route::get('/jurnals', [PembimbingController::class, 'index'])->name('jurnals');
-    Route::post('/jurnals/{jurnal}/komentar', [PembimbingController::class, 'storeKomentar'])->name('komentar');
-    
-    // [BARU] Route untuk Ubah Status / Approve Jurnal
     Route::patch('/jurnals/{jurnal}/status', [PembimbingController::class, 'updateStatus'])->name('status.update');
 });
 
-// MEMUAT RUTE AUTENTIKASI BROWSER (LOGIN, REGISTER, DLL)
+// MEMUAT RUTE AUTENTIKASI
 require __DIR__.'/auth.php';
