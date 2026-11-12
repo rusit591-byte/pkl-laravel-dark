@@ -11,16 +11,19 @@ class PageController extends Controller
 {
     public function home()
     {
-        // Jika user sudah login, langsung ambil data dashboard
+        // Jika user sudah login, cek rolenya
         if (Auth::check()) {
             $user = Auth::user();
-            $query = Jurnal::query();
 
-            if ($user->role === 'peserta') {
-                $query->where('user_id', $user->id);
+            // JIKA PEMBIMBING: Langsung arahkan ke halaman monitoring/jurnal pembimbing
+            if ($user->role === 'pembimbing') {
+                return redirect()->route('pembimbing.jurnals');
             }
 
-            $totalJurnal = (clone $query)->count();
+            // JIKA PESERTA: Tampilkan dashboard ringkasan pribadi
+            $query = Jurnal::where('user_id', $user->id);
+
+            $totalJurnal = $query->count();
             $statusCounts = (clone $query)
                 ->select('status', DB::raw('count(*) as total'))
                 ->groupBy('status')
@@ -36,7 +39,6 @@ class PageController extends Controller
                 ->where('tanggal', '>=', now()->subDays(7)->toDateString())
                 ->count();
 
-            // Tampilkan view dashboard langsung di beranda
             return view('dashboard.index', compact('totalJurnal', 'statusCounts', 'kategoriCounts', 'jurnal7Hari'));
         }
 
@@ -44,6 +46,13 @@ class PageController extends Controller
         return view('home');
     }
 
-    public function about() { return view('about'); }
-    public function contact() { return view('contact'); }
+    public function about() 
+    { 
+        return view('pages.about'); 
+    }
+
+    public function contact() 
+    { 
+        return view('pages.contact'); 
+    }
 }

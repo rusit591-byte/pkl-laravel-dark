@@ -10,7 +10,7 @@
                     </a>
                 </div>
 
-                <!-- Navigation Links (Menu Utama Website & Jurnal) -->
+                <!-- Navigation Links (Menu Utama Berdasarkan Role) -->
                 <div class="hidden space-x-4 sm:-my-px sm:ms-8 sm:flex sm:items-center">
                     <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg text-sm font-medium transition {{ request()->routeIs('home') ? 'bg-darkBorder text-accentGreen' : 'text-gray-300 hover:text-white hover:bg-darkBorder/50' }}">
                         Beranda
@@ -23,9 +23,17 @@
                     </a>
 
                     @auth
-                        <a href="{{ route('jurnals.index') }}" class="px-3 py-2 rounded-lg text-sm font-medium transition {{ request()->routeIs('jurnals*') ? 'bg-darkBorder text-accentGreen' : 'text-gray-300 hover:text-white hover:bg-darkBorder/50' }}">
-                            Jurnal Harian
-                        </a>
+                        @if(Auth::user()->role === 'peserta')
+                            <!-- Menu Khusus Siswa/Peserta -->
+                            <a href="{{ route('jurnals.index') }}" class="px-3 py-2 rounded-lg text-sm font-medium transition {{ request()->routeIs('jurnals*') ? 'bg-darkBorder text-accentGreen' : 'text-gray-300 hover:text-white hover:bg-darkBorder/50' }}">
+                                Jurnal Harian
+                            </a>
+                        @else
+                            <!-- Menu Khusus Pembimbing -->
+                            <a href="{{ route('pembimbing.jurnals') }}" class="px-3 py-2 rounded-lg text-sm font-medium transition {{ request()->routeIs('pembimbing*') ? 'bg-darkBorder text-accentGreen' : 'text-gray-300 hover:text-white hover:bg-darkBorder/50' }}">
+                                Monitoring Peserta
+                            </a>
+                        @endif
                     @endauth
                 </div>
             </div>
@@ -51,9 +59,16 @@
                                 <x-dropdown-link :href="route('profile.edit')" class="hover:bg-darkBorder">
                                     {{ __('Profile') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link :href="route('jurnals.index')" class="hover:bg-darkBorder">
-                                    {{ __('Jurnal Harian') }}
-                                </x-dropdown-link>
+
+                                @if(Auth::user()->role === 'peserta')
+                                    <x-dropdown-link :href="route('jurnals.index')" class="hover:bg-darkBorder">
+                                        {{ __('Jurnal Harian') }}
+                                    </x-dropdown-link>
+                                @else
+                                    <x-dropdown-link :href="route('pembimbing.jurnals')" class="hover:bg-darkBorder">
+                                        {{ __('Monitoring Peserta') }}
+                                    </x-dropdown-link>
+                                @endif
 
                                 <!-- Authentication -->
                                 <form method="POST" action="{{ route('logout') }}">
@@ -94,7 +109,11 @@
         <a href="{{ route('contact') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-darkBorder">Kontak</a>
 
         @auth
-            <a href="{{ route('jurnals.index') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-accentGreen hover:bg-darkBorder">Jurnal Harian</a>
+            @if(Auth::user()->role === 'peserta')
+                <a href="{{ route('jurnals.index') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-accentGreen hover:bg-darkBorder">Jurnal Harian</a>
+            @else
+                <a href="{{ route('pembimbing.jurnals') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-accentGreen hover:bg-darkBorder">Monitoring Peserta</a>
+            @endif
             
             <div class="pt-4 pb-1 border-t border-darkBorder">
                 <div class="px-3 mb-2">
