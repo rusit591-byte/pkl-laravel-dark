@@ -11,8 +11,8 @@
             theme: {
                 extend: {
                     colors: {
-                        appBg: '#121212',          /* Background gelap pekat */
-                        cardSurface: '#1a1a1a',    /* Card surface ngotak */
+                        appBg: '#121212',       /* Background gelap pekat */
+                        cardSurface: '#1a1a1a',   /* Card surface ngotak */
                         borderSubtle: '#2a2a2a',   /* Garis pembatas tipis */
                         accentGreen: '#4ade80',    /* Hijau aksen */
                     }
@@ -42,9 +42,21 @@
                         <a href="{{ route('home') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('home') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
                             Beranda
                         </a>
-                        <a href="{{ route('jurnals.index') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('jurnals*') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
-                            Jurnal Harian
-                        </a>
+
+                        @auth
+                            @if(Auth::user()->role === 'pembimbing')
+                                <!-- Menu Khusus Pembimbing -->
+                                <a href="{{ route('pembimbing.jurnals') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('pembimbing.jurnals*') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
+                                    Monitoring Jurnal
+                                </a>
+                            @else
+                                <!-- Menu Khusus Peserta / Siswa -->
+                                <a href="{{ route('jurnals.index') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('jurnals*') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
+                                    Jurnal Harian
+                                </a>
+                            @endif
+                        @endauth
+
                         <a href="{{ route('about') }}" class="px-3 py-1.5 rounded-md transition {{ request()->routeIs('about') ? 'bg-appBg text-accentGreen font-semibold border border-borderSubtle' : 'text-gray-400 hover:text-white' }}">
                             Tentang
                         </a>
@@ -55,37 +67,37 @@
                 </div>
 
                 <!-- Bagian User / Auth di Navbar -->
-<div class="flex items-center gap-3">
-    @auth
-        <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 bg-appBg border border-borderSubtle hover:border-accentGreen px-3 py-1.5 rounded-md transition group">
-            <!-- Avatar Foto atau Inisial -->
-            <div class="w-6 h-6 rounded-full bg-emerald-950 border border-emerald-900 text-accentGreen flex items-center justify-center text-[10px] font-bold overflow-hidden">
-                @if(Auth::user()->avatar)
-                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="w-full h-full object-cover">
-                @else
-                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                @endif
-            </div>
-            <span class="text-xs text-gray-300 group-hover:text-white font-medium transition">
-                {{ Auth::user()->name }}
-            </span>
-        </a>
+                <div class="flex items-center gap-3">
+                    @auth
+                        <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 bg-appBg border border-borderSubtle hover:border-accentGreen px-3 py-1.5 rounded-md transition group">
+                            <!-- Avatar Foto atau Inisial -->
+                            <div class="w-6 h-6 rounded-full bg-emerald-950 border border-emerald-900 text-accentGreen flex items-center justify-center text-[10px] font-bold overflow-hidden">
+                                @if(Auth::user()->avatar)
+                                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="w-full h-full object-cover">
+                                @else
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                @endif
+                            </div>
+                            <span class="text-xs text-gray-300 group-hover:text-white font-medium transition">
+                                {{ Auth::user()->name }}
+                            </span>
+                        </a>
 
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="text-xs text-red-400 bg-appBg border border-borderSubtle px-3 py-1.5 rounded-md hover:bg-red-950/40 transition">
-                Keluar
-            </button>
-        </form>
-    @else
-        <a href="{{ route('login') }}" class="text-xs text-gray-300 px-3 py-1.5 rounded-md hover:text-white transition">
-            Masuk
-        </a>
-        <a href="{{ route('register') }}" class="text-xs text-slate-950 bg-accentGreen font-bold px-3.5 py-1.5 rounded-md hover:bg-green-400 transition shadow-sm">
-            Daftar
-        </a>
-    @endauth
-</div>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="text-xs text-red-400 bg-appBg border border-borderSubtle px-3 py-1.5 rounded-md hover:bg-red-950/40 transition">
+                                Keluar
+                            </button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="text-xs text-gray-300 px-3 py-1.5 rounded-md hover:text-white transition">
+                            Masuk
+                        </a>
+                        <a href="{{ route('register') }}" class="text-xs text-slate-950 bg-accentGreen font-bold px-3.5 py-1.5 rounded-md hover:bg-green-400 transition shadow-sm">
+                            Daftar
+                        </a>
+                    @endauth
+                </div>
 
             </div>
         </div>
