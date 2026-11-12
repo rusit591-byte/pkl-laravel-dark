@@ -18,13 +18,33 @@ class DatabaseSeeder extends Seeder
             KategoriSeeder::class,
         ]);
     
-        // Buat Akun Pembimbing Default
+        // Akun Pembimbing dari Sekolah (Pak Andi)
         \App\Models\User::firstOrCreate(
-            ['email' => 'pembimbing@metanouva.com'],
+            ['email' => 'pak.andi@sekolah.com'],
             [
-                'name' => 'Pembimbing PKL',
+                'name' => 'Pak Andi (Pembimbing Sekolah)',
                 'password' => bcrypt('password123'),
                 'role' => 'pembimbing',
+            ]
+        ); 
+        
+        // Akun pembimbing Tempat PKL (pak Febrian)
+        \App\Models\User::firstOrCreate(
+            ['email' => 'pak.febrian@metanouva.com'],
+            [
+                'name' => 'Pak Febrian (Pembimbing Industri)',
+                'password' => bcrypt('password123'),
+                'role' => 'pembimbing',
+            ]
+        );
+
+        // Akun Siswa PKL (Rosyid)
+        \App\Models\User::firstOrCreate(
+            ['email' => 'rusit591@gmail.com'],
+            [
+                'name' => 'Rosyid Prastyo Jisriansyah',
+                'password' => bcrypt('password123'),
+                'role' => 'peserta',
             ]
         );
     }
