@@ -11,11 +11,11 @@ class PageController extends Controller
 {
     public function home()
     {
-        // Jika user sudah login, cek rolenya
+        // Jika user sudah login, langsung ambil data dashboard
         if (Auth::check()) {
             $user = Auth::user();
 
-            // JIKA PEMBIMBING: Langsung arahkan ke halaman monitoring/jurnal pembimbing
+            // JIKA PEMBIMBING: Langsung arahkan ke halaman monitoring pembimbing
             if ($user->role === 'pembimbing') {
                 return redirect()->route('pembimbing.jurnals');
             }
@@ -42,8 +42,8 @@ class PageController extends Controller
             return view('dashboard.index', compact('totalJurnal', 'statusCounts', 'kategoriCounts', 'jurnal7Hari'));
         }
 
-        // Jika belum login, tampilkan halaman landing biasa
-        return view('home');
+        // Jika belum login, arahkan ke view di dalam folder pages (pages.home)
+        return view('pages.home');
     }
 
     public function about() 
