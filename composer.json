@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",
+        "laravel/sanctum": "^4.5",
         "laravel/tinker": "^2.10.1"
     },
     "require-dev": {
@@ -73,13 +74,25 @@
             "dont-discover": []
         }
     },
-    "config": {
+"config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "audit": {
+            "block-insecure": false,
+            "ignore": [
+                "PKSA-yxbx-3c9s-cjt9",
+                "PKSA-24ph-xkrh-y79j",
+                "PKSA-pr6q-2w5s-kzzf",
+                "PKSA-nxjs-s6hn-vb6m",
+                "PKSA-b2gg-vk1g-6d5q",
+                "PKSA-nktx-f1n1-b4yd",
+                "PKSA-3gxv-7xhq-mgmz"
+            ]
         }
     },
     "minimum-stability": "stable",

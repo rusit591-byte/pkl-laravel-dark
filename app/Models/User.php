@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Laravel\Sanctum\HasApiTokens; // 1. Tambahkan ini di atas
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,7 +11,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable; // 2. Tambahkan HasApiTokens di sini
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'avatar', 
+        'role', // Tambahkan ini jika di database sudah ada kolom role untuk pembimbing/siswa
     ];
 
     /**
@@ -48,7 +49,7 @@ class User extends Authenticatable
         ];
     }
 
-    // Relasi ke Jurnal (Opsional jika ingin didefinisikan di Model User)[cite: 14]
+    // Relasi ke Jurnal
     public function jurnals()
     {
         return $this->hasMany(Jurnal::class);
