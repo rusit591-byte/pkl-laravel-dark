@@ -25,6 +25,7 @@ services:
     restart: always
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_HOST: "%"
       MYSQL_DATABASE: db_pkl_laravel
     ports:
       - "3307:3306"
