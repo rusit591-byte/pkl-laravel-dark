@@ -21,7 +21,7 @@ class JurnalController extends Controller
             ->paginate(5)
             ->withQueryString();
 
-        $kategoris = Kategori::all();
+            $kategoris = Kategori::all();
 
         return view('jurnals.index', compact('jurnals', 'kategoris'));
     }
