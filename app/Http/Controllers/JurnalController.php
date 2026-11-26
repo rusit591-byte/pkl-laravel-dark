@@ -14,25 +14,13 @@ class JurnalController extends Controller
     {
         $user = Auth::user();
 
-        $query = Jurnal::where('user_id', $user->id)->with(['kategori', 'komentars.user']);
+        $jurnals = Jurnal::where('user_id', $user->id)
+            ->with(['kategori', 'komentars.user'])
+            ->filter($request->only(['search', 'kategori_id', 'status', 'tanggal']))
+            ->latest('tanggal')
+            ->paginate(5)
+            ->withQueryString();
 
-        if ($request->filled('search')) {
-            $query->where('judul', 'like', '%' . $request->search . '%');
-        }
-
-        if ($request->filled('kategori_id')) {
-            $query->where('kategori_id', $request->kategori_id);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('tanggal')) {
-            $query->where('tanggal', $request->tanggal);
-        }
-
-        $jurnals = $query->latest('tanggal')->paginate(5)->withQueryString();
         $kategoris = Kategori::all();
 
         return view('jurnals.index', compact('jurnals', 'kategoris'));

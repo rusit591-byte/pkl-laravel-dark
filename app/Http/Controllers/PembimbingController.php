@@ -12,17 +12,12 @@ class PembimbingController extends Controller
 {
     public function index(Request $request)
     {
-        // Ambil semua jurnal beserta relasinya
-        $query = Jurnal::with(['user', 'kategori', 'komentars.user']);
+        $jurnals = Jurnal::with(['user', 'kategori', 'komentars.user'])
+            ->filter($request->only(['user_id']))
+            ->latest('tanggal')
+            ->paginate(10)
+            ->withQueryString();
 
-        // Filter jika pembimbing memilih siswa tertentu
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user_id);
-        }
-
-        $jurnals = $query->latest('tanggal')->paginate(10)->withQueryString();
-        
-        // Ambil data peserta (gunakan pengaman jika kolom role berbeda)
         $pesertas = User::where('role', 'peserta')->orWhere('role', 'siswa')->get();
 
         return view('pembimbing.jurnals.index', compact('jurnals', 'pesertas'));

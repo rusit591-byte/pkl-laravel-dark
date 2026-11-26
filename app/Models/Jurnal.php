@@ -36,4 +36,14 @@ class Jurnal extends Model
     {
         return $this->hasMany(Komentar::class);
     }
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['user_id'] ?? null, fn ($q, $v) => $q->where('user_id', $v))
+            ->when($filters['search'] ?? null, fn ($q, $v) => $q->where('judul', 'like', '%' . $v . '%'))
+            ->when($filters['kategori_id'] ?? null, fn ($q, $v) => $q->where('kategori_id', $v))
+            ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('status', $v))
+            ->when($filters['tanggal'] ?? null, fn ($q, $v) => $q->where('tanggal', $v));
+    }
 }
