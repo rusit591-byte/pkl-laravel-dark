@@ -33,10 +33,10 @@ class PembimbingApiTest extends TestCase
 
         $this->actingAs($pembimbing)
             ->patchJson("/api/pembimbing/jurnals/{$jurnal->id}/status", [
-                'status' => 'disetujui',
+                'status' => 'selesai',
             ])
             ->assertStatus(200)
-            ->assertJsonPath('data.status', 'disetujui');
+            ->assertJsonPath('data.status', 'selesai');
 
         $this->actingAs($pembimbing)
             ->postJson("/api/pembimbing/jurnals/{$jurnal->id}/komentar", [
@@ -46,7 +46,7 @@ class PembimbingApiTest extends TestCase
 
         $this->assertDatabaseHas('jurnals', [
             'id' => $jurnal->id,
-            'status' => 'disetujui',
+            'status' => 'selesai',
         ]);
 
         $this->assertDatabaseHas('komentars', [

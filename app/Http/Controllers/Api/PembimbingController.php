@@ -46,7 +46,7 @@ class PembimbingController extends Controller
         }
 
         $validated = $request->validate([
-            'status' => 'required|string|in:proses,disetujui,revisi',
+            'status' => 'required|string|in:todo,proses,selesai',
         ]);
 
         $jurnal->update(['status' => $validated['status']]);
