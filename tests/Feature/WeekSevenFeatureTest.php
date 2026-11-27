@@ -50,7 +50,7 @@ class WeekSevenFeatureTest extends TestCase
             ->assertRedirect();
 
         $this->actingAs($pembimbing)
-            ->patch(route('pembimbing.status.update', $jurnal), ['status' => 'disetujui'])
+            ->patch(route('pembimbing.status.update', $jurnal), ['status' => 'selesai'])
             ->assertRedirect();
 
         $this->assertDatabaseHas('komentars', [
@@ -61,7 +61,7 @@ class WeekSevenFeatureTest extends TestCase
 
         $this->assertDatabaseHas('jurnals', [
             'id'     => $jurnal->id,
-            'status' => 'disetujui',
+            'status' => 'selesai',
         ]);
     }
 
